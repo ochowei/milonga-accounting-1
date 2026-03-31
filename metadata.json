@@ -1,0 +1,5 @@
+{
+  "name": "Remix: Dance Party Accounting",
+  "description": "A dance party accounting app with Google login, headcount tracking, and cash reconciliation.",
+  "requestFramePermissions": []
+}

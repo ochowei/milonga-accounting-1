@@ -1,0 +1,69 @@
+{
+  "entities": {
+    "AccountingRecord": {
+      "title": "Accounting Record",
+      "description": "A record of headcount and cash for a dance party event.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The UID of the user who created the record." },
+        "date": { "type": "string", "format": "date-time", "description": "The date of the event." },
+        "eventName": { "type": "string", "description": "The name of the event." },
+        "generalPrice": { "type": "number", "description": "The price of a general ticket." },
+        "studentPrice": { "type": "number", "description": "The price of a student ticket." },
+        "leaderCount": { "type": "number", "description": "Number of leaders." },
+        "followerCount": { "type": "number", "description": "Number of followers." },
+        "seasonPassCount": { "type": "number", "description": "Number of season pass holders." },
+        "seasonPassLeaderCount": { "type": "number", "description": "Number of season pass leaders." },
+        "seasonPassFollowerCount": { "type": "number", "description": "Number of season pass followers." },
+        "studentPassCount": { "type": "number", "description": "Number of student pass holders." },
+        "ticketTypes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "price": { "type": "number" },
+              "leaderCount": { "type": "number" },
+              "followerCount": { "type": "number" }
+            },
+            "required": ["id", "name", "price", "leaderCount", "followerCount"]
+          }
+        },
+        "cash1000": { "type": "number", "description": "Number of 1000 bills." },
+        "cash500": { "type": "number", "description": "Number of 500 bills." },
+        "cash100": { "type": "number", "description": "Number of 100 bills." },
+        "cash50": { "type": "number", "description": "Number of 50 coins." },
+        "cash10": { "type": "number", "description": "Number of 10 coins." },
+        "cash5": { "type": "number", "description": "Number of 5 coins." },
+        "cash1": { "type": "number", "description": "Number of 1 coins." },
+        "startingCash": { "type": "number", "description": "Starting petty cash (備用金)." },
+        "expectedRevenue": { "type": "number", "description": "Calculated expected revenue." },
+        "actualCash": { "type": "number", "description": "Calculated actual cash minus starting cash." },
+        "isBalanced": { "type": "boolean", "description": "Whether expected revenue equals actual cash." }
+      },
+      "required": ["userId", "date", "eventName", "generalPrice", "studentPrice", "leaderCount", "followerCount", "seasonPassCount", "studentPassCount", "cash1000", "cash500", "cash100", "cash50", "cash10", "cash5", "cash1", "startingCash", "expectedRevenue", "actualCash", "isBalanced"]
+    },
+    "UserSettings": {
+      "title": "User Settings",
+      "description": "User preferences and default values.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The UID of the user." },
+        "defaultGeneralPrice": { "type": "number", "description": "Default general ticket price." },
+        "defaultStudentPrice": { "type": "number", "description": "Default student ticket price." }
+      },
+      "required": ["userId", "defaultGeneralPrice", "defaultStudentPrice"]
+    }
+  },
+  "firestore": {
+    "records/{recordId}": {
+      "schema": { "$ref": "#/entities/AccountingRecord" },
+      "description": "Accounting records for dance parties."
+    },
+    "settings/{userId}": {
+      "schema": { "$ref": "#/entities/UserSettings" },
+      "description": "User specific settings and defaults."
+    }
+  }
+}

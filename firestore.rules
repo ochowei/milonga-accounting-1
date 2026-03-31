@@ -1,0 +1,134 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: records
+    // Document ID: auto-generated
+    // Fields:
+    //   - userId: string (required) - The UID of the user who created the record.
+    //   - date: string (required) - The date of the event.
+    //   - eventName: string (required) - The name of the event.
+    //   - generalPrice: number (required) - The price of a general ticket.
+    //   - studentPrice: number (required) - The price of a student ticket.
+    //   - leaderCount: number (required) - Number of leaders.
+    //   - followerCount: number (required) - Number of followers.
+    //   - seasonPassCount: number (required) - Number of season pass holders.
+    //   - studentPassCount: number (required) - Number of student pass holders.
+    //   - ticketTypes: list (optional) - List of ticket type objects.
+    //   - cash1000: number (required) - Number of 1000 bills.
+    //   - cash500: number (required) - Number of 500 bills.
+    //   - cash100: number (required) - Number of 100 bills.
+    //   - cash50: number (required) - Number of 50 coins.
+    //   - cash10: number (required) - Number of 10 coins.
+    //   - cash5: number (required) - Number of 5 coins.
+    //   - cash1: number (required) - Number of 1 coins.
+    //   - startingCash: number (required) - Starting petty cash.
+    //   - expectedRevenue: number (required) - Calculated expected revenue.
+    //   - actualCash: number (required) - Calculated actual cash.
+    //   - isBalanced: bool (required) - Whether expected revenue equals actual cash.
+    //
+    // Collection: settings
+    // Document ID: userId
+    // Fields:
+    //   - userId: string (required) - The UID of the user.
+    //   - defaultGeneralPrice: number (required) - Default general ticket price.
+    //   - defaultStudentPrice: number (required) - Default student ticket price.
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "ochowei@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function uidUnchanged() {
+      return !('userId' in request.resource.data) || request.resource.data.userId == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('userId' in request.resource.data) || request.resource.data.userId == resource.data.userId;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function validStringLength(field, minLen, maxLen) {
+      return request.resource.data[field] is string &&
+             request.resource.data[field].size() >= minLen &&
+             request.resource.data[field].size() <= maxLen;
+    }
+
+    function isPositiveOrZero(field) {
+      return request.resource.data[field] is number && request.resource.data[field] >= 0;
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidRecord(data) {
+      return hasRequiredFields(['userId', 'date', 'eventName', 'generalPrice', 'studentPrice', 'leaderCount', 'followerCount', 'seasonPassCount', 'studentPassCount', 'cash1000', 'cash500', 'cash100', 'cash50', 'cash10', 'cash5', 'cash1', 'startingCash', 'expectedRevenue', 'actualCash', 'isBalanced']) &&
+             data.userId is string && data.userId.size() > 0 &&
+             data.date is string && data.date.size() > 0 &&
+             data.eventName is string && data.eventName.size() > 0 && data.eventName.size() <= 100 &&
+             data.generalPrice is number && data.generalPrice >= 0 &&
+             data.studentPrice is number && data.studentPrice >= 0 &&
+             data.leaderCount is number && data.leaderCount >= 0 &&
+             data.followerCount is number && data.followerCount >= 0 &&
+             data.seasonPassCount is number && data.seasonPassCount >= 0 &&
+             data.studentPassCount is number && data.studentPassCount >= 0 &&
+             (!('ticketTypes' in data) || data.ticketTypes is list) &&
+             data.cash1000 is number && data.cash1000 >= 0 &&
+             data.cash500 is number && data.cash500 >= 0 &&
+             data.cash100 is number && data.cash100 >= 0 &&
+             data.cash50 is number && data.cash50 >= 0 &&
+             data.cash10 is number && data.cash10 >= 0 &&
+             data.cash5 is number && data.cash5 >= 0 &&
+             data.cash1 is number && data.cash1 >= 0 &&
+             data.startingCash is number && data.startingCash >= 0 &&
+             data.expectedRevenue is number &&
+             data.actualCash is number &&
+             data.isBalanced is bool;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /records/{recordId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && isValidRecord(request.resource.data) && uidUnchanged();
+      allow update: if (isDocOwner() || isAdmin()) && isValidRecord(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /settings/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(userId) && request.resource.data.role == 'user';
+      allow update: if isAdmin();
+    }
+  }
+}
