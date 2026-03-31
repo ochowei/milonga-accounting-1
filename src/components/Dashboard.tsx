@@ -3,7 +3,7 @@ import { useRecords } from '../hooks/useRecords';
 import { useSettings } from '../hooks/useSettings';
 import { RecordForm } from './RecordForm';
 import { AccountingRecord, UserSettings } from '../types';
-import { Plus, Edit2, Trash2, LogOut, CheckCircle, XCircle, AlertTriangle, Settings, Save } from 'lucide-react';
+import { Plus, Minus, Edit2, Trash2, LogOut, CheckCircle, XCircle, AlertTriangle, Settings, Save } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -244,42 +244,90 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
                   <div className="space-y-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">預設一般票價 (Default General Price)</label>
-                      <input 
-                        type="text" 
-                        inputMode="numeric"
-                        value={tempSettings.defaultGeneralPrice ?? 0} 
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
-                          setTempSettings(prev => ({ ...prev, defaultGeneralPrice: val === '' ? 0 : parseInt(val, 10) }));
-                        }}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-gray-700"
-                      />
+                      <div className="flex items-center space-x-2">
+                        <button 
+                          type="button"
+                          onClick={() => setTempSettings(prev => ({ ...prev, defaultGeneralPrice: Math.max(0, (prev.defaultGeneralPrice ?? 0) - 50) }))}
+                          className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 transition-colors"
+                        >
+                          <Minus size={18} />
+                        </button>
+                        <input 
+                          type="text" 
+                          inputMode="numeric"
+                          value={tempSettings.defaultGeneralPrice ?? 0} 
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
+                            setTempSettings(prev => ({ ...prev, defaultGeneralPrice: val === '' ? 0 : parseInt(val, 10) }));
+                          }}
+                          className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-gray-700 text-center"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => setTempSettings(prev => ({ ...prev, defaultGeneralPrice: (prev.defaultGeneralPrice ?? 0) + 50 }))}
+                          className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 transition-colors"
+                        >
+                          <Plus size={18} />
+                        </button>
+                      </div>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">預設學生票價 (Default Student Price)</label>
-                      <input 
-                        type="text" 
-                        inputMode="numeric"
-                        value={tempSettings.defaultStudentPrice ?? 0} 
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
-                          setTempSettings(prev => ({ ...prev, defaultStudentPrice: val === '' ? 0 : parseInt(val, 10) }));
-                        }}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-gray-700"
-                      />
+                      <div className="flex items-center space-x-2">
+                        <button 
+                          type="button"
+                          onClick={() => setTempSettings(prev => ({ ...prev, defaultStudentPrice: Math.max(0, (prev.defaultStudentPrice ?? 0) - 50) }))}
+                          className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 transition-colors"
+                        >
+                          <Minus size={18} />
+                        </button>
+                        <input 
+                          type="text" 
+                          inputMode="numeric"
+                          value={tempSettings.defaultStudentPrice ?? 0} 
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
+                            setTempSettings(prev => ({ ...prev, defaultStudentPrice: val === '' ? 0 : parseInt(val, 10) }));
+                          }}
+                          className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-gray-700 text-center"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => setTempSettings(prev => ({ ...prev, defaultStudentPrice: (prev.defaultStudentPrice ?? 0) + 50 }))}
+                          className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 transition-colors"
+                        >
+                          <Plus size={18} />
+                        </button>
+                      </div>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">預設備用金 (Default Starting Cash)</label>
-                      <input 
-                        type="text" 
-                        inputMode="numeric"
-                        value={tempSettings.defaultStartingCash ?? 0} 
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
-                          setTempSettings(prev => ({ ...prev, defaultStartingCash: val === '' ? 0 : parseInt(val, 10) }));
-                        }}
-                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-gray-700"
-                      />
+                      <div className="flex items-center space-x-2">
+                        <button 
+                          type="button"
+                          onClick={() => setTempSettings(prev => ({ ...prev, defaultStartingCash: Math.max(0, (prev.defaultStartingCash ?? 0) - 100) }))}
+                          className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 transition-colors"
+                        >
+                          <Minus size={18} />
+                        </button>
+                        <input 
+                          type="text" 
+                          inputMode="numeric"
+                          value={tempSettings.defaultStartingCash ?? 0} 
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
+                            setTempSettings(prev => ({ ...prev, defaultStartingCash: val === '' ? 0 : parseInt(val, 10) }));
+                          }}
+                          className="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-gray-700 text-center"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => setTempSettings(prev => ({ ...prev, defaultStartingCash: (prev.defaultStartingCash ?? 0) + 100 }))}
+                          className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 transition-colors"
+                        >
+                          <Plus size={18} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

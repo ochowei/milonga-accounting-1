@@ -648,30 +648,68 @@ export const RecordForm: React.FC<RecordFormProps> = ({
                 <div key={denom} className="flex items-center justify-between group">
                   <span className="text-sm font-bold text-gray-400 group-hover:text-gray-600 transition-colors">${denom}</span>
                   <div className="flex items-center space-x-2">
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const name = `cash${denom}`;
+                        const currentVal = formData[name as keyof typeof formData] as number;
+                        handleChange({ target: { name, value: String(Math.max(0, currentVal - 1)), type: 'number' } } as any);
+                      }}
+                      className="p-1 rounded-full hover:bg-emerald-100 text-emerald-600 transition-colors"
+                    >
+                      <Minus size={14} />
+                    </button>
                     <input 
                       type="text" 
                       inputMode="numeric"
                       name={`cash${denom}`} 
                       value={formData[`cash${denom}` as keyof typeof formData] as number} 
                       onChange={handleChange} 
-                      className="w-20 px-2 py-1 bg-white border border-gray-200 rounded-lg text-right font-mono font-bold text-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none" 
+                      className="w-16 px-2 py-1 bg-white border border-gray-200 rounded-lg text-center font-mono font-bold text-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none" 
                     />
-                    <span className="text-xs text-gray-400 w-4">張</span>
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const name = `cash${denom}`;
+                        const currentVal = formData[name as keyof typeof formData] as number;
+                        handleChange({ target: { name, value: String(currentVal + 1), type: 'number' } } as any);
+                      }}
+                      className="p-1 rounded-full hover:bg-emerald-100 text-emerald-600 transition-colors"
+                    >
+                      <Plus size={14} />
+                    </button>
+                    <span className="text-xs text-gray-400 w-4">{denom <= 50 ? '個' : '張'}</span>
                   </div>
                 </div>
               ))}
               <div className="pt-4 mt-4 border-t border-gray-200">
                 <label className={labelClasses}>備用金 (Starting Cash)</label>
-                <div className="relative">
-                  <Wallet className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                  <input 
-                    type="text" 
-                    inputMode="numeric"
-                    name="startingCash" 
-                    value={formData.startingCash} 
-                    onChange={handleChange} 
-                    className={`${inputClasses} pl-10 bg-white`} 
-                  />
+                <div className="flex items-center space-x-2">
+                  <button 
+                    type="button"
+                    onClick={() => handleChange({ target: { name: 'startingCash', value: String(Math.max(0, formData.startingCash - 100)), type: 'number' } } as any)}
+                    className="p-1.5 rounded-full hover:bg-gray-200 text-gray-500 transition-colors"
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <div className="relative flex-1">
+                    <Wallet className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <input 
+                      type="text" 
+                      inputMode="numeric"
+                      name="startingCash" 
+                      value={formData.startingCash} 
+                      onChange={handleChange} 
+                      className={`${inputClasses} pl-10 bg-white text-center`} 
+                    />
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={() => handleChange({ target: { name: 'startingCash', value: String(formData.startingCash + 100), type: 'number' } } as any)}
+                    className="p-1.5 rounded-full hover:bg-gray-200 text-gray-500 transition-colors"
+                  >
+                    <Plus size={16} />
+                  </button>
                 </div>
               </div>
             </div>
