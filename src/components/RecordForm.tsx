@@ -11,6 +11,7 @@ interface RecordFormProps {
   userId: string;
   defaultGeneralPrice?: number;
   defaultStudentPrice?: number;
+  defaultStartingCash?: number;
 }
 
 export const RecordForm: React.FC<RecordFormProps> = ({ 
@@ -18,8 +19,9 @@ export const RecordForm: React.FC<RecordFormProps> = ({
   onSave, 
   onCancel, 
   userId,
-  defaultGeneralPrice = 300,
-  defaultStudentPrice = 200
+  defaultGeneralPrice = 400,
+  defaultStudentPrice = 200,
+  defaultStartingCash = 5000
 }) => {
   const [formData, setFormData] = useState<Omit<AccountingRecord, 'id'>>({
     userId,
@@ -53,7 +55,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     cash10: 0,
     cash5: 0,
     cash1: 0,
-    startingCash: 0,
+    startingCash: initialData?.startingCash ?? defaultStartingCash,
     expectedRevenue: 0,
     actualCash: 0,
     isBalanced: false,
@@ -135,7 +137,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
         };
       });
     }
-  }, [defaultGeneralPrice, defaultStudentPrice, initialData]);
+  }, [defaultGeneralPrice, defaultStudentPrice, defaultStartingCash, initialData]);
 
   useEffect(() => {
     // Calculate expected revenue and total counts

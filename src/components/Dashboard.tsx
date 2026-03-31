@@ -71,6 +71,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
       setTempSettings({
         defaultGeneralPrice: settings.defaultGeneralPrice,
         defaultStudentPrice: settings.defaultStudentPrice,
+        defaultStartingCash: settings.defaultStartingCash,
       });
     }
     setIsSettingsOpen(true);
@@ -122,6 +123,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
             userId={user.uid}
             defaultGeneralPrice={settings?.defaultGeneralPrice}
             defaultStudentPrice={settings?.defaultStudentPrice}
+            defaultStartingCash={settings?.defaultStartingCash}
           />
         ) : (
           <div className="space-y-6">
@@ -262,6 +264,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onSignOut }) => {
                         onChange={(e) => {
                           const val = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
                           setTempSettings(prev => ({ ...prev, defaultStudentPrice: val === '' ? 0 : parseInt(val, 10) }));
+                        }}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-gray-700"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5 ml-1">預設備用金 (Default Starting Cash)</label>
+                      <input 
+                        type="text" 
+                        inputMode="numeric"
+                        value={tempSettings.defaultStartingCash ?? 0} 
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
+                          setTempSettings(prev => ({ ...prev, defaultStartingCash: val === '' ? 0 : parseInt(val, 10) }));
                         }}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-gray-700"
                       />

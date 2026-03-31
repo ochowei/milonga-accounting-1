@@ -24,8 +24,9 @@ export const useSettings = (user: User | null) => {
         // Default settings if none exist
         setSettings({
           userId: user.uid,
-          defaultGeneralPrice: 300,
+          defaultGeneralPrice: 400,
           defaultStudentPrice: 200,
+          defaultStartingCash: 5000,
         });
       }
       setLoading(false);
@@ -44,8 +45,9 @@ export const useSettings = (user: User | null) => {
       const docRef = doc(db, 'settings', user.uid);
       const currentSettings = settings || {
         userId: user.uid,
-        defaultGeneralPrice: 300,
+        defaultGeneralPrice: 400,
         defaultStudentPrice: 200,
+        defaultStartingCash: 5000,
       };
       await setDoc(docRef, { ...currentSettings, ...newSettings });
     } catch (error) {

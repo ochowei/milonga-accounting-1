@@ -51,9 +51,10 @@
       "properties": {
         "userId": { "type": "string", "description": "The UID of the user." },
         "defaultGeneralPrice": { "type": "number", "description": "Default general ticket price." },
-        "defaultStudentPrice": { "type": "number", "description": "Default student ticket price." }
+        "defaultStudentPrice": { "type": "number", "description": "Default student ticket price." },
+        "defaultStartingCash": { "type": "number", "description": "Default starting petty cash (備用金)." }
       },
-      "required": ["userId", "defaultGeneralPrice", "defaultStudentPrice"]
+      "required": ["userId", "defaultGeneralPrice", "defaultStudentPrice", "defaultStartingCash"]
     }
   },
   "firestore": {

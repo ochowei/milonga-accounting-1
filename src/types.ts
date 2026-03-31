@@ -37,4 +37,5 @@ export interface UserSettings {
   userId: string;
   defaultGeneralPrice: number;
   defaultStudentPrice: number;
+  defaultStartingCash: number;
 }

@@ -37,6 +37,7 @@ service cloud.firestore {
     //   - userId: string (required) - The UID of the user.
     //   - defaultGeneralPrice: number (required) - Default general ticket price.
     //   - defaultStudentPrice: number (required) - Default student ticket price.
+    //   - defaultStartingCash: number (required) - Default starting petty cash.
     //
     // ===============================================================
 
