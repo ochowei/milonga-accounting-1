@@ -4,6 +4,11 @@ import { Save, X, Calculator, Users, DollarSign, CheckCircle, XCircle, Calendar,
 import { motion } from 'motion/react';
 import { TicketType } from '../types';
 
+const asNumber = (value: unknown, fallback = 0): number => {
+  const number = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(number) ? number : fallback;
+};
+
 interface RecordFormProps {
   initialData?: AccountingRecord;
   onSave: (record: Omit<AccountingRecord, 'id'>) => void;
@@ -66,7 +71,23 @@ export const RecordForm: React.FC<RecordFormProps> = ({
 
   useEffect(() => {
     if (initialData) {
-      const data = { ...initialData };
+      // Older records may not contain the cash denomination fields. Normalize
+      // persisted data before rendering or calculating, otherwise undefined
+      // values make the reconciliation result NaN.
+      const data = {
+        ...initialData,
+        generalPrice: asNumber(initialData.generalPrice, defaultGeneralPrice),
+        studentPrice: asNumber(initialData.studentPrice, defaultStudentPrice),
+        leaderCount: asNumber(initialData.leaderCount),
+        followerCount: asNumber(initialData.followerCount),
+        seasonPassCount: asNumber(initialData.seasonPassCount),
+        studentPassCount: asNumber(initialData.studentPassCount),
+        cash1000: asNumber(initialData.cash1000), cash500: asNumber(initialData.cash500),
+        cash200: asNumber(initialData.cash200), cash100: asNumber(initialData.cash100),
+        cash50: asNumber(initialData.cash50), cash10: asNumber(initialData.cash10),
+        cash5: asNumber(initialData.cash5), cash1: asNumber(initialData.cash1),
+        startingCash: asNumber(initialData.startingCash, defaultStartingCash),
+      };
       if (!data.ticketTypes || data.ticketTypes.length === 0) {
         // Calculate legacy counts for migration
         const totalAttendees = data.leaderCount + data.followerCount;
@@ -78,20 +99,27 @@ export const RecordForm: React.FC<RecordFormProps> = ({
         // But better to just put in leader and let user adjust if needed, or try to guess.
         // Actually, let's just use the total counts we have.
         data.ticketTypes = [
-          { id: 'general', name: '一般票 (General)', price: data.generalPrice, leaderCount: generalAttendees, followerCount: 0 },
-          { id: 'student', name: '學生票 (Student)', price: data.studentPrice, leaderCount: studentAttendees, followerCount: 0 },
+          { id: 'general', name: '一般票 (General)', price: asNumber(data.generalPrice), leaderCount: generalAttendees, followerCount: 0 },
+          { id: 'student', name: '學生票 (Student)', price: asNumber(data.studentPrice), leaderCount: studentAttendees, followerCount: 0 },
           { id: 'season', name: '季票 (Season Pass)', price: 0, leaderCount: data.seasonPassLeaderCount ?? data.seasonPassCount, followerCount: data.seasonPassFollowerCount ?? 0 }
         ];
       } else if (!data.ticketTypes.some(t => t.id === 'season')) {
         // If ticketTypes exists but missing season (from a previous version of this update)
-        data.ticketTypes.push({ 
+        data.ticketTypes = [...data.ticketTypes, { 
           id: 'season', 
           name: '季票 (Season Pass)', 
           price: 0, 
           leaderCount: data.seasonPassLeaderCount ?? data.seasonPassCount ?? 0, 
           followerCount: data.seasonPassFollowerCount ?? 0 
-        });
+        }];
       }
+
+      data.ticketTypes = data.ticketTypes.map(ticket => ({
+        ...ticket,
+        price: asNumber(ticket.price),
+        leaderCount: asNumber(ticket.leaderCount),
+        followerCount: asNumber(ticket.followerCount),
+      }));
       
       // Ensure season pass counts are initialized if missing
       if (data.seasonPassLeaderCount === undefined) data.seasonPassLeaderCount = data.seasonPassCount;
@@ -153,12 +181,15 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     
     if (formData.ticketTypes && formData.ticketTypes.length > 0) {
       formData.ticketTypes.forEach(ticket => {
+        const price = asNumber(ticket.price);
+        const leaderCount = asNumber(ticket.leaderCount);
+        const followerCount = asNumber(ticket.followerCount);
         if (ticket.id === 'general') {
           generalTicket = ticket;
         } else {
-          expectedRevenue += ticket.price * (ticket.leaderCount + ticket.followerCount);
-          sumOthersLeader += ticket.leaderCount;
-          sumOthersFollower += ticket.followerCount;
+          expectedRevenue += price * (leaderCount + followerCount);
+          sumOthersLeader += leaderCount;
+          sumOthersFollower += followerCount;
           
           if (ticket.id === 'student') {
             studentPassCount = ticket.leaderCount + ticket.followerCount;
@@ -176,7 +207,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     const calculatedGeneralFollower = Math.max(0, formData.followerCount - sumOthersFollower);
 
     if (generalTicket) {
-      expectedRevenue += generalTicket.price * (calculatedGeneralLeader + calculatedGeneralFollower);
+      expectedRevenue += asNumber(generalTicket.price) * (calculatedGeneralLeader + calculatedGeneralFollower);
     }
 
     // Calculate actual cash
@@ -190,7 +221,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
       (formData.cash5 * 5) +
       (formData.cash1 * 1);
     
-    const actualCash = totalCash - formData.startingCash;
+    const actualCash = totalCash - asNumber(formData.startingCash);
     const isBalanced = expectedRevenue === actualCash;
 
     setFormData(prev => {
