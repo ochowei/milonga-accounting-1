@@ -22,6 +22,7 @@ export interface AccountingRecord {
   ticketTypes?: TicketType[];
   cash1000: number;
   cash500: number;
+  cash200: number;
   cash100: number;
   cash50: number;
   cash10: number;

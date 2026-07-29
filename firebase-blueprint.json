@@ -32,6 +32,7 @@
         },
         "cash1000": { "type": "number", "description": "Number of 1000 bills." },
         "cash500": { "type": "number", "description": "Number of 500 bills." },
+        "cash200": { "type": "number", "description": "Number of 200 bills." },
         "cash100": { "type": "number", "description": "Number of 100 bills." },
         "cash50": { "type": "number", "description": "Number of 50 coins." },
         "cash10": { "type": "number", "description": "Number of 10 coins." },
@@ -42,7 +43,7 @@
         "actualCash": { "type": "number", "description": "Calculated actual cash minus starting cash." },
         "isBalanced": { "type": "boolean", "description": "Whether expected revenue equals actual cash." }
       },
-      "required": ["userId", "date", "eventName", "generalPrice", "studentPrice", "leaderCount", "followerCount", "seasonPassCount", "studentPassCount", "cash1000", "cash500", "cash100", "cash50", "cash10", "cash5", "cash1", "startingCash", "expectedRevenue", "actualCash", "isBalanced"]
+      "required": ["userId", "date", "eventName", "generalPrice", "studentPrice", "leaderCount", "followerCount", "seasonPassCount", "studentPassCount", "cash1000", "cash500", "cash200", "cash100", "cash50", "cash10", "cash5", "cash1", "startingCash", "expectedRevenue", "actualCash", "isBalanced"]
     },
     "UserSettings": {
       "title": "User Settings",

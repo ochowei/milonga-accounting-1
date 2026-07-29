@@ -50,6 +50,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     ],
     cash1000: 0,
     cash500: 0,
+    cash200: 0,
     cash100: 0,
     cash50: 0,
     cash10: 0,
@@ -182,6 +183,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     const totalCash = 
       (formData.cash1000 * 1000) +
       (formData.cash500 * 500) +
+      (formData.cash200 * 200) +
       (formData.cash100 * 100) +
       (formData.cash50 * 50) +
       (formData.cash10 * 10) +
@@ -219,7 +221,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     formData.ticketTypes,
     formData.leaderCount,
     formData.followerCount,
-    formData.cash1000, formData.cash500, formData.cash100, formData.cash50, formData.cash10, formData.cash5, formData.cash1,
+    formData.cash1000, formData.cash500, formData.cash200, formData.cash100, formData.cash50, formData.cash10, formData.cash5, formData.cash1,
     formData.startingCash
   ]);
 
@@ -286,7 +288,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
     const { name, value, type } = e.target;
     const isNumericField = [
       'generalPrice', 'studentPrice', 'leaderCount', 'followerCount', 
-      'cash1000', 'cash500', 'cash100', 'cash50', 'cash10', 'cash5', 'cash1', 
+      'cash1000', 'cash500', 'cash200', 'cash100', 'cash50', 'cash10', 'cash5', 'cash1', 
       'startingCash'
     ].includes(name);
 
@@ -644,7 +646,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({
               <h3 className="font-bold uppercase tracking-widest text-xs">現金盤點 (Cash)</h3>
             </div>
             <div className="space-y-3">
-              {[1000, 500, 100, 50, 10, 5, 1].map((denom) => (
+              {[1000, 500, 200, 100, 50, 10, 5, 1].map((denom) => (
                 <div key={denom} className="flex items-center justify-between group">
                   <span className="text-sm font-bold text-gray-400 group-hover:text-gray-600 transition-colors">${denom}</span>
                   <div className="flex items-center space-x-2">

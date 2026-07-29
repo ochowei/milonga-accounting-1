@@ -21,6 +21,7 @@ service cloud.firestore {
     //   - ticketTypes: list (optional) - List of ticket type objects.
     //   - cash1000: number (required) - Number of 1000 bills.
     //   - cash500: number (required) - Number of 500 bills.
+    //   - cash200: number (required) - Number of 200 bills.
     //   - cash100: number (required) - Number of 100 bills.
     //   - cash50: number (required) - Number of 50 coins.
     //   - cash10: number (required) - Number of 10 coins.
@@ -88,7 +89,7 @@ service cloud.firestore {
     // Domain Validators
     // ===============================================================
     function isValidRecord(data) {
-      return hasRequiredFields(['userId', 'date', 'eventName', 'generalPrice', 'studentPrice', 'leaderCount', 'followerCount', 'seasonPassCount', 'studentPassCount', 'cash1000', 'cash500', 'cash100', 'cash50', 'cash10', 'cash5', 'cash1', 'startingCash', 'expectedRevenue', 'actualCash', 'isBalanced']) &&
+      return hasRequiredFields(['userId', 'date', 'eventName', 'generalPrice', 'studentPrice', 'leaderCount', 'followerCount', 'seasonPassCount', 'studentPassCount', 'cash1000', 'cash500', 'cash200', 'cash100', 'cash50', 'cash10', 'cash5', 'cash1', 'startingCash', 'expectedRevenue', 'actualCash', 'isBalanced']) &&
              data.userId is string && data.userId.size() > 0 &&
              data.date is string && data.date.size() > 0 &&
              data.eventName is string && data.eventName.size() > 0 && data.eventName.size() <= 100 &&
@@ -101,6 +102,7 @@ service cloud.firestore {
              (!('ticketTypes' in data) || data.ticketTypes is list) &&
              data.cash1000 is number && data.cash1000 >= 0 &&
              data.cash500 is number && data.cash500 >= 0 &&
+             data.cash200 is number && data.cash200 >= 0 &&
              data.cash100 is number && data.cash100 >= 0 &&
              data.cash50 is number && data.cash50 >= 0 &&
              data.cash10 is number && data.cash10 >= 0 &&
